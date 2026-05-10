@@ -1,0 +1,14 @@
+# Development notes
+CLAUDE.md
+
+# Node
+node_modules/
+
+# Scraper and tooling (kept locally, not deployed)
+scraper/
+*.py
+*.ipynb
+
+# OS
+.DS_Store
+Thumbs.db

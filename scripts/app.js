@@ -367,6 +367,7 @@ pagePrev.addEventListener('click', () => {
   if (state.page > 1) {
     state.page--;
     render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 });
 
@@ -375,6 +376,7 @@ pageNext.addEventListener('click', () => {
   if (state.page < totalPages) {
     state.page++;
     render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 });
 

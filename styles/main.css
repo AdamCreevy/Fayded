@@ -853,9 +853,9 @@ body.unit-ft .card-height-ft {
   .sidebar-divider { display: none; }
 
   .sidebar-reset {
-    flex: 0 0 auto;
-    width: auto;
-    align-self: flex-end;
+    flex: 1 1 100%;
+    width: 100%;
+    order: 999;
   }
 
   .content-header {

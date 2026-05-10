@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fayded Dresses — Shop by Model Height</title>
+  <meta name="description" content="Browse dresses from Lavish Alice, Self Portrait, Chi Chi London, Jarlo London, Nobody's Child, Oh Polly, Boden, Sosandar, Palava and Ghost London — filtered by the model's height so you can see exactly how they'll fall on you.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-word">Fayded</span>
+        <span class="logo-tag">Dresses</span>
+      </div>
+      <div class="header-content">
+        <p class="header-tagline">Shop dresses from leading UK retailers — filtered by the height of the model wearing them, so you can see exactly how they'll fall on you.</p>
+        <div class="header-search">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input class="search-input" id="searchInput" type="search"
+                 placeholder="Search dresses, brands, colours…"
+                 aria-label="Search dresses">
+          <button class="search-clear" id="searchClear" aria-label="Clear search">&times;</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-layout">
+
+    <!-- ── Left filter sidebar ─────────────────────────────────── -->
+    <aside class="filter-sidebar">
+
+      <!-- Reset -->
+      <button class="reset-btn sidebar-reset" onclick="resetFilters()">Reset all filters</button>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- Model Height -->
+      <div class="filter-section filter-section--height">
+        <div class="filter-label-row">
+          <div class="filter-label">
+            <svg class="filter-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <line x1="12" y1="2" x2="12" y2="22"/>
+              <line x1="8" y1="5" x2="12" y2="5"/>
+              <line x1="8" y1="9" x2="12" y2="9"/>
+              <line x1="8" y1="13" x2="12" y2="13"/>
+              <line x1="8" y1="17" x2="12" y2="17"/>
+              <line x1="16" y1="5" x2="12" y2="5"/>
+              <line x1="16" y1="19" x2="12" y2="19"/>
+            </svg>
+            Model Height
+          </div>
+          <div class="unit-toggle" id="unitToggle" role="group" aria-label="Height unit">
+            <button class="unit-btn unit-btn--active" data-unit="ft">ft</button>
+            <span class="unit-divider" aria-hidden="true">|</span>
+            <button class="unit-btn" data-unit="cm">cm</button>
+          </div>
+        </div>
+        <div class="height-slider-wrap">
+          <div class="slider-labels">
+            <span id="heightMinLabel">150cm</span>
+            <span class="slider-sep">&nbsp;–&nbsp;</span>
+            <span id="heightMaxLabel">185cm</span>
+            <span class="slider-ftlabel" id="heightFtLabel">&nbsp;(any)</span>
+          </div>
+          <div class="dual-range-wrap">
+            <div class="range-track">
+              <div class="range-fill" id="rangeFill"></div>
+            </div>
+            <input type="range" id="heightMin" min="150" max="196" value="150" step="1"
+                   class="range-thumb range-thumb--min" aria-label="Minimum model height">
+            <input type="range" id="heightMax" min="150" max="196" value="196" step="1"
+                   class="range-thumb range-thumb--max" aria-label="Maximum model height">
+          </div>
+          <div class="slider-extremes">
+            <span id="sliderExtremeMin">150cm</span>
+            <span id="sliderExtremeMax">185cm</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- Price Range -->
+      <div class="filter-section filter-section--price">
+        <div class="filter-label">Price</div>
+        <div class="height-slider-wrap">
+          <div class="slider-labels">
+            <span id="priceMaxLabel">Any price</span>
+          </div>
+          <div class="dual-range-wrap">
+            <div class="range-track">
+              <div class="range-fill" id="priceFill"></div>
+            </div>
+            <input type="range" id="priceMax" min="0" max="29" value="29" step="1"
+                   class="range-thumb range-thumb--max" aria-label="Maximum price">
+          </div>
+          <div class="slider-extremes">
+            <span>£10</span>
+            <span>£1,000</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- Retailer -->
+      <div class="filter-section filter-section--retailer">
+        <div class="filter-label">Retailer</div>
+        <div class="pill-group" id="retailerPills" role="group" aria-label="Filter by retailer">
+          <button class="pill pill--active" data-retailer="all">All</button>
+          <button class="pill" data-retailer="Lavish Alice">Lavish Alice</button>
+          <button class="pill" data-retailer="Self Portrait">Self Portrait</button>
+          <button class="pill" data-retailer="Chi Chi London">Chi Chi London</button>
+          <button class="pill" data-retailer="Jarlo London">Jarlo London</button>
+          <button class="pill" data-retailer="Nobody's Child">Nobody's Child</button>
+          <button class="pill" data-retailer="Oh Polly">Oh Polly</button>
+          <button class="pill" data-retailer="Boden">Boden</button>
+          <button class="pill" data-retailer="Sosandar">Sosandar</button>
+          <button class="pill" data-retailer="Palava">Palava</button>
+          <button class="pill" data-retailer="Ghost London">Ghost London</button>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- Length -->
+      <div class="filter-section filter-section--type">
+        <div class="filter-label">Length</div>
+        <div class="pill-group" id="typePills" role="group" aria-label="Filter by dress length">
+          <button class="pill pill--active" data-type="all">All</button>
+          <button class="pill" data-type="mini">Mini</button>
+          <button class="pill" data-type="midi">Midi</button>
+          <button class="pill" data-type="maxi">Maxi</button>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+    </aside>
+
+    <!-- ── Content area ────────────────────────────────────────── -->
+    <div class="content-area">
+
+      <div class="content-header">
+        <div class="filter-section filter-section--sort">
+          <select class="sort-select" id="sortSelect" aria-label="Sort dresses">
+            <option value="default">Featured</option>
+            <option value="price-asc">Price: low to high</option>
+            <option value="price-desc">Price: high to low</option>
+            <option value="height-asc">Height: shortest first</option>
+            <option value="height-desc">Height: tallest first</option>
+          </select>
+        </div>
+        <div class="filter-count" aria-live="polite">
+          <span id="resultCount">0</span>
+          <span class="filter-count-label">dresses</span>
+        </div>
+      </div>
+
+      <main class="main" id="main">
+        <div class="dress-grid" id="dressGrid" aria-label="Dress results"></div>
+        <div class="empty-state" id="emptyState" hidden role="status">
+          <p class="empty-title">No dresses found</p>
+          <p class="empty-body">Try widening the height or price range, or changing the retailer or length filter.</p>
+          <button class="reset-btn" onclick="resetFilters()">Reset filters</button>
+        </div>
+
+        <nav class="pagination" id="pagination" hidden aria-label="Page navigation">
+          <button class="page-btn page-btn--prev" id="pagePrev" aria-label="Previous page">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <span class="page-info" id="pageInfo" aria-live="polite"></span>
+          <button class="page-btn page-btn--next" id="pageNext" aria-label="Next page">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </nav>
+      </main>
+
+    </div>
+
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-brand">Fayded Dresses</p>
+      <p class="footer-note">
+        Product data sourced from Lavish Alice, Self Portrait, Chi Chi London, Jarlo London, Nobody's Child, Oh Polly, Boden, Sosandar, Palava and Ghost London.
+        We may earn a commission on purchases made through our links.
+        Model height data is extracted from retailer product descriptions.
+      </p>
+    </div>
+  </footer>
+
+  <script src="scripts/data.js"></script>
+  <script src="scripts/app.js"></script>
+</body>
+</html>

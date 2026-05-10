@@ -475,6 +475,10 @@ body {
   color: var(--white);
 }
 
+.pill--active:hover {
+  color: var(--white);
+}
+
 .pill:focus-visible {
   outline: 2px solid var(--text);
   outline-offset: 2px;

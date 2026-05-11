@@ -54,8 +54,9 @@ const sliderExtremeMin  = document.getElementById('sliderExtremeMin');
 const sliderExtremeMax  = document.getElementById('sliderExtremeMax');
 const rangeFill         = document.getElementById('rangeFill');
 const unitToggle        = document.getElementById('unitToggle');
+const priceMinInput     = document.getElementById('priceMin');
 const priceMaxInput     = document.getElementById('priceMax');
-const priceMaxLabel     = document.getElementById('priceMaxLabel');
+const priceLabel        = document.getElementById('priceLabel');
 const priceFill         = document.getElementById('priceFill');
 const retailerPills     = document.getElementById('retailerPills');
 const typePills         = document.getElementById('typePills');
@@ -69,6 +70,9 @@ const pagination        = document.getElementById('pagination');
 const pagePrev          = document.getElementById('pagePrev');
 const pageNext          = document.getElementById('pageNext');
 const pageInfo          = document.getElementById('pageInfo');
+const filterSidebar     = document.getElementById('filterSidebar');
+const filterToggleBar   = document.getElementById('filterToggleBar');
+const filterActiveBadge = document.getElementById('filterActiveBadge');
 
 // ─── Initialise height slider bounds from data ────────────────────
 heightMinInput.min   = DATA_HEIGHT_MIN;
@@ -79,6 +83,9 @@ heightMaxInput.max   = DATA_HEIGHT_MAX;
 heightMaxInput.value = DATA_HEIGHT_MAX;
 
 // ─── Initialise price slider ──────────────────────────────────────
+priceMinInput.min   = 0;
+priceMinInput.max   = PRICE_POINTS.length - 1;
+priceMinInput.value = 0;
 priceMaxInput.min   = 0;
 priceMaxInput.max   = PRICE_POINTS.length - 1;
 priceMaxInput.value = PRICE_POINTS.length - 1;
@@ -113,14 +120,21 @@ function updateSliderFill() {
 }
 
 function updatePriceFill() {
-  const pct = (parseInt(priceMaxInput.value, 10) / (PRICE_POINTS.length - 1)) * 100;
-  priceFill.style.left  = '0%';
-  priceFill.style.width = `${pct}%`;
+  const last   = PRICE_POINTS.length - 1;
+  const minPct = (parseInt(priceMinInput.value, 10) / last) * 100;
+  const maxPct = (parseInt(priceMaxInput.value, 10) / last) * 100;
+  priceFill.style.left  = `${minPct}%`;
+  priceFill.style.width = `${maxPct - minPct}%`;
 }
 
 function updatePriceLabels() {
-  const isMax = state.maxPrice === PRICE_POINTS[PRICE_POINTS.length - 1];
-  priceMaxLabel.textContent = isMax ? 'Any price' : `Up to £${state.maxPrice}`;
+  const isFullRange = parseInt(priceMinInput.value, 10) === 0 &&
+                      parseInt(priceMaxInput.value, 10) === PRICE_POINTS.length - 1;
+  if (isFullRange) {
+    priceLabel.textContent = 'Any price';
+  } else {
+    priceLabel.textContent = `£${state.minPrice} – £${state.maxPrice}`;
+  }
 }
 
 // ─── Slider labels ────────────────────────────────────────────────
@@ -242,6 +256,23 @@ function render() {
   }
 }
 
+// ─── Active filter count (for mobile badge) ───────────────────────
+function getActiveFilterCount() {
+  let n = 0;
+  if (state.minHeight !== DATA_HEIGHT_MIN || state.maxHeight !== DATA_HEIGHT_MAX) n++;
+  if (parseInt(priceMinInput.value, 10) !== 0 || parseInt(priceMaxInput.value, 10) !== PRICE_POINTS.length - 1) n++;
+  if (state.retailer  !== 'all') n++;
+  if (state.dressType !== 'all') n++;
+  if (state.query)               n++;
+  return n;
+}
+
+function updateFilterBadge() {
+  const n = getActiveFilterCount();
+  filterActiveBadge.hidden      = n === 0;
+  filterActiveBadge.textContent = n;
+}
+
 // ─── Apply all state changes ──────────────────────────────────────
 function applyFilters() {
   state.page = 1;
@@ -249,9 +280,16 @@ function applyFilters() {
   updateSliderFill();
   updatePriceLabels();
   updatePriceFill();
+  updateFilterBadge();
   render();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// ─── Mobile filter panel toggle ──────────────────────────────────
+filterToggleBar.addEventListener('click', () => {
+  const isOpen = filterSidebar.classList.toggle('is-open');
+  filterToggleBar.setAttribute('aria-expanded', String(isOpen));
+});
 
 // ─── Height slider events ─────────────────────────────────────────
 const SLIDER_MIN_GAP = 2;
@@ -277,8 +315,26 @@ heightMaxInput.addEventListener('input', () => {
 });
 
 // ─── Price slider events ──────────────────────────────────────────
+const PRICE_SLIDER_MIN_GAP = 1;
+
+priceMinInput.addEventListener('input', () => {
+  let idx = parseInt(priceMinInput.value, 10);
+  const maxIdx = parseInt(priceMaxInput.value, 10);
+  if (idx > maxIdx - PRICE_SLIDER_MIN_GAP) {
+    idx = maxIdx - PRICE_SLIDER_MIN_GAP;
+    priceMinInput.value = idx;
+  }
+  state.minPrice = idx === 0 ? 0 : PRICE_POINTS[idx];
+  applyFilters();
+});
+
 priceMaxInput.addEventListener('input', () => {
-  const idx = parseInt(priceMaxInput.value, 10);
+  let idx = parseInt(priceMaxInput.value, 10);
+  const minIdx = parseInt(priceMinInput.value, 10);
+  if (idx < minIdx + PRICE_SLIDER_MIN_GAP) {
+    idx = minIdx + PRICE_SLIDER_MIN_GAP;
+    priceMaxInput.value = idx;
+  }
   state.maxPrice = PRICE_POINTS[idx];
   applyFilters();
 });
@@ -397,6 +453,7 @@ function resetFilters() {
   heightMaxInput.value = DATA_HEIGHT_MAX;
   heightMinInput.step  = '2.54';
   heightMaxInput.step  = '2.54';
+  priceMinInput.value  = 0;
   priceMaxInput.value  = PRICE_POINTS.length - 1;
   sortSelect.value     = 'default';
   searchInput.value    = '';

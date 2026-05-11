@@ -70,9 +70,10 @@ const pagination        = document.getElementById('pagination');
 const pagePrev          = document.getElementById('pagePrev');
 const pageNext          = document.getElementById('pageNext');
 const pageInfo          = document.getElementById('pageInfo');
-const filterSidebar     = document.getElementById('filterSidebar');
-const filterToggleBar   = document.getElementById('filterToggleBar');
-const filterActiveBadge = document.getElementById('filterActiveBadge');
+const filterSidebar        = document.getElementById('filterSidebar');
+const filterToggleBar      = document.getElementById('filterToggleBar');
+const filterSidebarContent = document.getElementById('filterSidebarContent');
+const filterActiveBadge    = document.getElementById('filterActiveBadge');
 
 // ─── Initialise height slider bounds from data ────────────────────
 heightMinInput.min   = DATA_HEIGHT_MIN;
@@ -289,6 +290,12 @@ function applyFilters() {
 filterToggleBar.addEventListener('click', () => {
   const isOpen = filterSidebar.classList.toggle('is-open');
   filterToggleBar.setAttribute('aria-expanded', String(isOpen));
+  if (isOpen) {
+    const cap = Math.floor(window.innerHeight * 0.75);
+    filterSidebarContent.style.height = Math.min(filterSidebarContent.scrollHeight, cap) + 'px';
+  } else {
+    filterSidebarContent.style.height = '0';
+  }
 });
 
 // ─── Height slider events ─────────────────────────────────────────

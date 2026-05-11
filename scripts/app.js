@@ -274,15 +274,25 @@ function updateFilterBadge() {
 }
 
 // ─── Apply all state changes ──────────────────────────────────────
+let renderTimer = null;
+
 function applyFilters() {
   state.page = 1;
+  // Immediate: cheap label/badge updates so controls feel responsive
   updateHeightLabels();
   updateSliderFill();
   updatePriceLabels();
   updatePriceFill();
   updateFilterBadge();
-  render();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Dim grid to signal a pending update
+  dressGrid.classList.add('is-loading');
+  // Debounce the expensive DOM update — rapid switching skips renders
+  clearTimeout(renderTimer);
+  renderTimer = setTimeout(() => {
+    dressGrid.classList.remove('is-loading');
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 80);
 }
 
 // ─── Mobile filter panel toggle ──────────────────────────────────

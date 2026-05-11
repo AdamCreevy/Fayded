@@ -542,6 +542,11 @@ body {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
+  transition: opacity 0.1s ease;
+}
+
+.dress-grid.is-loading {
+  opacity: 0.45;
 }
 
 @media (min-width: 560px) {
@@ -558,25 +563,20 @@ body {
 
 /* ─── Dress card ──────────────────────────────────────────────── */
 .dress-card {
-  animation: cardIn 0.45s var(--ease-out) both;
+  animation: cardIn 0.2s var(--ease-out) both;
 }
 
 @keyframes cardIn {
-  from { opacity: 0; transform: translateY(14px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.dress-card:nth-child(1)  { animation-delay: 0ms; }
-.dress-card:nth-child(2)  { animation-delay: 50ms; }
-.dress-card:nth-child(3)  { animation-delay: 100ms; }
-.dress-card:nth-child(4)  { animation-delay: 150ms; }
-.dress-card:nth-child(5)  { animation-delay: 200ms; }
-.dress-card:nth-child(6)  { animation-delay: 250ms; }
-.dress-card:nth-child(7)  { animation-delay: 300ms; }
-.dress-card:nth-child(8)  { animation-delay: 350ms; }
-.dress-card:nth-child(9)  { animation-delay: 400ms; }
-.dress-card:nth-child(10) { animation-delay: 450ms; }
-.dress-card:nth-child(n+11) { animation-delay: 480ms; }
+.dress-card:nth-child(1) { animation-delay: 0ms; }
+.dress-card:nth-child(2) { animation-delay: 20ms; }
+.dress-card:nth-child(3) { animation-delay: 40ms; }
+.dress-card:nth-child(4) { animation-delay: 60ms; }
+.dress-card:nth-child(5) { animation-delay: 80ms; }
+.dress-card:nth-child(n+6) { animation-delay: 100ms; }
 
 .card-link {
   display: flex;

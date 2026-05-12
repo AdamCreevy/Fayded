@@ -937,11 +937,12 @@ body.filter-open {
   }
 
   .filter-sidebar-content {
-    position: absolute;
-    top: 100%;
+    position: fixed;
+    top: 48px;
     left: 0;
     right: 0;
     z-index: 99;
+    -webkit-overflow-scrolling: touch;
     flex-direction: row;
     flex-wrap: wrap;
     align-items: flex-start;

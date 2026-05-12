@@ -331,16 +331,24 @@ function applyFilters() {
 }
 
 // ─── Mobile filter panel toggle ──────────────────────────────────
+const filterSidebarContent = document.getElementById('filterSidebarContent');
+
+function handleBodyTouchMove(e) {
+  if (!e.target.closest('#filterSidebarContent')) {
+    e.preventDefault();
+  }
+}
+
 function openFilterPanel() {
   filterSidebar.classList.add('is-open');
   filterToggleBar.setAttribute('aria-expanded', 'true');
-  document.body.style.overflow = 'hidden';
+  document.addEventListener('touchmove', handleBodyTouchMove, { passive: false });
 }
 
 function closeFilterPanel() {
   filterSidebar.classList.remove('is-open');
   filterToggleBar.setAttribute('aria-expanded', 'false');
-  document.body.style.overflow = '';
+  document.removeEventListener('touchmove', handleBodyTouchMove);
 }
 
 filterToggleBar.addEventListener('click', () => {

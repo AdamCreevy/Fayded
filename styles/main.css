@@ -851,12 +851,6 @@ body.unit-ft .card-height-ft {
 }
 
 /* ─── Responsive ──────────────────────────────────────────────── */
-body.filter-open {
-  position: fixed;
-  width: 100%;
-  overflow-y: scroll;
-}
-
 @media (max-width: 860px) {
   .page-layout {
     flex-direction: column;

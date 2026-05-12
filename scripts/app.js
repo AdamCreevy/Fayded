@@ -332,14 +332,11 @@ function applyFilters() {
 
 // ─── Mobile filter panel toggle ──────────────────────────────────
 const filterSidebarContent = document.getElementById('filterSidebarContent');
-let savedScrollY = 0;
 
 function openFilterPanel() {
   const panelTop = filterToggleBar.getBoundingClientRect().bottom;
-  filterSidebarContent.style.top = `${panelTop}px`;
-  savedScrollY = window.scrollY;
-  document.body.style.top = `-${savedScrollY}px`;
-  document.body.classList.add('filter-open');
+  filterSidebarContent.style.top       = `${panelTop}px`;
+  filterSidebarContent.style.maxHeight = `${window.innerHeight - panelTop}px`;
   filterSidebar.classList.add('is-open');
   filterToggleBar.setAttribute('aria-expanded', 'true');
 }
@@ -347,9 +344,6 @@ function openFilterPanel() {
 function closeFilterPanel() {
   filterSidebar.classList.remove('is-open');
   filterToggleBar.setAttribute('aria-expanded', 'false');
-  document.body.classList.remove('filter-open');
-  document.body.style.top = '';
-  window.scrollTo(0, savedScrollY);
 }
 
 filterToggleBar.addEventListener('click', () => {

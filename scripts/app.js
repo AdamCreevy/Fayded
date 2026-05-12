@@ -618,23 +618,9 @@ function resetFilters() {
   applyFilters();
 }
 
-// ─── Mobile swipe to open/close filter panel ─────────────────────
+// ─── Mobile swipe-up to close filter panel ───────────────────────
 let touchStartY        = 0;
 let startedAtBottom    = false;
-let toggleTouchStartY  = 0;
-
-// Swipe down on the toggle bar to open
-filterToggleBar.addEventListener('touchstart', e => {
-  toggleTouchStartY = e.touches[0].clientY;
-}, { passive: true });
-
-filterToggleBar.addEventListener('touchend', e => {
-  const delta = e.changedTouches[0].clientY - toggleTouchStartY;
-  if (delta > 40 && !filterSidebar.classList.contains('is-open')) {
-    e.preventDefault(); // stop the click event from immediately closing it again
-    openFilterPanel();
-  }
-}, { passive: false });
 
 filterSidebar.addEventListener('touchstart', e => {
   touchStartY     = e.touches[0].clientY;

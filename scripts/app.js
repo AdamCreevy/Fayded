@@ -613,10 +613,20 @@ filterSidebar.addEventListener('touchstart', e => {
   touchStartY = e.touches[0].clientY;
 }, { passive: true });
 
+// Prevent the iOS rubber-band bounce when at the bottom of the panel;
+// touchend (below) will close the panel instead.
+filterSidebarContent.addEventListener('touchmove', e => {
+  const { scrollTop, scrollHeight, clientHeight } = filterSidebarContent;
+  const atBottom       = scrollTop + clientHeight >= scrollHeight - 1;
+  const fingerMovingUp = e.touches[0].clientY < touchStartY;
+  if (atBottom && fingerMovingUp) e.preventDefault();
+}, { passive: false });
+
 filterSidebar.addEventListener('touchend', e => {
-  const delta = e.changedTouches[0].clientY - touchStartY;
-  const atTop  = filterSidebarContent.scrollTop === 0;
-  if (delta < -40 && filterSidebar.classList.contains('is-open') && atTop) {
+  const delta    = e.changedTouches[0].clientY - touchStartY;
+  const atTop    = filterSidebarContent.scrollTop === 0;
+  const atBottom = filterSidebarContent.scrollTop + filterSidebarContent.clientHeight >= filterSidebarContent.scrollHeight - 1;
+  if (delta < -40 && filterSidebar.classList.contains('is-open') && (atTop || atBottom)) {
     closeFilterPanel();
   }
 }, { passive: true });

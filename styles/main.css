@@ -973,9 +973,14 @@ body.unit-ft .card-height-ft {
   }
 
   .filter-sidebar .filter-section--retailer,
-  .filter-sidebar .filter-section--type,
   .filter-sidebar .filter-section--size {
     flex: 1 1 100%;
+  }
+
+  .filter-sidebar .filter-section--sale,
+  .filter-sidebar .filter-section--type {
+    flex: 1 1 0;
+    min-width: 0;
   }
 
   #sizePills {

@@ -309,7 +309,18 @@ function updateFilterBadge() {
 }
 
 // ─── Apply all state changes ──────────────────────────────────────
-let renderTimer = null;
+let renderTimer    = null;
+let pendingRender  = false;
+
+function triggerRender() {
+  dressGrid.classList.add('is-loading');
+  clearTimeout(renderTimer);
+  renderTimer = setTimeout(() => {
+    dressGrid.classList.remove('is-loading');
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 80);
+}
 
 function applyFilters() {
   state.page = 1;
@@ -319,15 +330,12 @@ function applyFilters() {
   updatePriceLabels();
   updatePriceFill();
   updateFilterBadge();
-  // Dim grid to signal a pending update
-  dressGrid.classList.add('is-loading');
-  // Debounce the expensive DOM update — rapid switching skips renders
-  clearTimeout(renderTimer);
-  renderTimer = setTimeout(() => {
-    dressGrid.classList.remove('is-loading');
-    render();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, 80);
+  // On mobile with the filter panel open, defer render+scroll until close
+  if (filterSidebar.classList.contains('is-open')) {
+    pendingRender = true;
+    return;
+  }
+  triggerRender();
 }
 
 // ─── Mobile filter panel toggle ──────────────────────────────────
@@ -352,6 +360,10 @@ function closeFilterPanel() {
   filterSidebar.classList.remove('is-open');
   filterToggleBar.setAttribute('aria-expanded', 'false');
   document.removeEventListener('touchmove', blockBackgroundScroll);
+  if (pendingRender) {
+    pendingRender = false;
+    triggerRender();
+  }
 }
 
 filterToggleBar.addEventListener('click', () => {

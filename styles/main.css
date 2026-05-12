@@ -938,7 +938,7 @@ body.filter-open {
 
   .filter-sidebar-content {
     position: fixed;
-    top: 48px;
+    top: 0;
     left: 0;
     right: 0;
     z-index: 99;

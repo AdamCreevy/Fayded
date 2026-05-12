@@ -331,9 +331,12 @@ function applyFilters() {
 }
 
 // ─── Mobile filter panel toggle ──────────────────────────────────
+const filterSidebarContent = document.getElementById('filterSidebarContent');
 let savedScrollY = 0;
 
 function openFilterPanel() {
+  const panelTop = filterToggleBar.getBoundingClientRect().bottom;
+  filterSidebarContent.style.top = `${panelTop}px`;
   savedScrollY = window.scrollY;
   document.body.style.top = `-${savedScrollY}px`;
   document.body.classList.add('filter-open');

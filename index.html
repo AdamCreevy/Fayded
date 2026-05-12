@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fayded Dresses — Shop by Model Height</title>
-  <meta name="description" content="Browse dresses from Lavish Alice, Self Portrait, Jarlo London, Nobody's Child, Oh Polly, Boden, Sosandar, Palava, Ghost London and Chi Chi London — filtered by the model's height so you can see exactly how they'll fall on you.">
+  <meta name="description" content="Browse dresses from Lavish Alice, Self Portrait, Jarlo London, Nobody's Child, Oh Polly, Boden, Sosandar, Palava, Ghost London, Chi Chi London, Monsoon and Hobbs — filtered by the model's height so you can see exactly how they'll fall on you.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
@@ -150,6 +150,8 @@
             <button class="pill" data-retailer="Palava">Palava</button>
             <button class="pill" data-retailer="Ghost London">Ghost London</button>
             <button class="pill" data-retailer="Chi Chi London">Chi Chi London</button>
+            <button class="pill" data-retailer="Monsoon">Monsoon</button>
+            <button class="pill" data-retailer="Hobbs">Hobbs</button>
           </div>
         </div>
 
@@ -163,6 +165,26 @@
             <button class="pill" data-type="mini">Mini</button>
             <button class="pill" data-type="midi">Midi</button>
             <button class="pill" data-type="maxi">Maxi</button>
+          </div>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Size -->
+        <div class="filter-section filter-section--size">
+          <div class="filter-label">Size (UK)</div>
+          <div class="pill-group" id="sizePills" role="group" aria-label="Filter by UK size">
+            <button class="pill pill--active" data-size="all">All</button>
+            <button class="pill" data-size="4">4</button>
+            <button class="pill" data-size="6">6</button>
+            <button class="pill" data-size="8">8</button>
+            <button class="pill" data-size="10">10</button>
+            <button class="pill" data-size="12">12</button>
+            <button class="pill" data-size="14">14</button>
+            <button class="pill" data-size="16">16</button>
+            <button class="pill" data-size="18">18</button>
+            <button class="pill" data-size="20">20</button>
+            <button class="pill" data-size="22">22</button>
           </div>
         </div>
 
@@ -195,7 +217,7 @@
         <div class="dress-grid" id="dressGrid" aria-label="Dress results"></div>
         <div class="empty-state" id="emptyState" hidden role="status">
           <p class="empty-title">No dresses found</p>
-          <p class="empty-body">Try widening the height or price range, or changing the retailer or length filter.</p>
+          <p class="empty-body">Try widening the height or price range, or changing the retailer, length, or size filter.</p>
           <button class="reset-btn" onclick="resetFilters()">Reset filters</button>
         </div>
 
@@ -218,7 +240,7 @@
     <div class="footer-inner">
       <p class="footer-brand">Fayded Dresses</p>
       <p class="footer-note">
-        Product data sourced from Lavish Alice, Self Portrait, Jarlo London, Nobody's Child, Oh Polly, Boden, Sosandar, Palava, Ghost London and Chi Chi London.
+        Product data sourced from Lavish Alice, Self Portrait, Jarlo London, Nobody's Child, Oh Polly, Boden, Sosandar, Palava, Ghost London, Chi Chi London, Monsoon and Hobbs.
         We may earn a commission on purchases made through our links.
         Model height data is extracted from retailer product descriptions.
       </p>

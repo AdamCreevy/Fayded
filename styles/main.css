@@ -958,7 +958,8 @@ body.unit-ft .card-height-ft {
   }
 
   .filter-sidebar .filter-section--retailer,
-  .filter-sidebar .filter-section--type {
+  .filter-sidebar .filter-section--type,
+  .filter-sidebar .filter-section--size {
     flex: 1 1 100%;
   }
 

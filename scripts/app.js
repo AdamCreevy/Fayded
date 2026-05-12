@@ -7,6 +7,24 @@
 const DATA_HEIGHT_MIN = 135;
 const DATA_HEIGHT_MAX = 196;
 
+// ─── UK size extraction from the colours/variants field ──────────
+function extractUkSizes(colours) {
+  const result = new Set();
+  for (const c of colours) {
+    const ukMatch = c.match(/UK\s*(\d+)/i);
+    if (ukMatch) { result.add(parseInt(ukMatch[1], 10)); continue; }
+    const trimmed = c.trim();
+    if (/^\d+$/.test(trimmed)) {
+      const n = parseInt(trimmed, 10);
+      if (n >= 4 && n <= 30 && n % 2 === 0) result.add(n);
+    }
+  }
+  return result;
+}
+
+const dressSizeMap = new Map(dresses.map(d => [d.id, extractUkSizes(d.sizes || [])]));
+
+
 const PAGE_SIZE = 100;
 
 // ─── Exclude dresses without a height or outside the valid range ──
@@ -38,6 +56,7 @@ const state = {
   maxPrice:  PRICE_POINTS[PRICE_POINTS.length - 1],
   retailer:  'all',
   dressType: 'all',
+  sizes:     new Set(),
   sort:      'default',
   unit:      'ft',
   query:     '',
@@ -60,6 +79,7 @@ const priceLabel        = document.getElementById('priceLabel');
 const priceFill         = document.getElementById('priceFill');
 const retailerPills     = document.getElementById('retailerPills');
 const typePills         = document.getElementById('typePills');
+const sizePills         = document.getElementById('sizePills');
 const sortSelect        = document.getElementById('sortSelect');
 const resultCount       = document.getElementById('resultCount');
 const dressGrid         = document.getElementById('dressGrid');
@@ -163,7 +183,8 @@ function updateHeightLabels() {
 
 // ─── Filter + sort ────────────────────────────────────────────────
 function getFilteredSorted() {
-  const q = state.query.toLowerCase().trim();
+  const q            = state.query.toLowerCase().trim();
+  const selectedSizes = [...state.sizes];
 
   let items = activeDresses.filter(d => {
     const inHeightRange = d.modelHeight >= state.minHeight && d.modelHeight <= state.maxHeight;
@@ -171,7 +192,9 @@ function getFilteredSorted() {
     const inRetailer    = state.retailer  === 'all' || d.retailer  === state.retailer;
     const inType        = state.dressType === 'all' || d.dressType === state.dressType;
     const inSearch      = !q || d.name.toLowerCase().includes(q) || d.retailer.toLowerCase().includes(q);
-    return inHeightRange && inPriceRange && inRetailer && inType && inSearch;
+    const inSize        = selectedSizes.length === 0 ||
+                          selectedSizes.some(s => (dressSizeMap.get(d.id) || new Set()).has(s));
+    return inHeightRange && inPriceRange && inRetailer && inType && inSearch && inSize;
   });
 
   switch (state.sort) {
@@ -263,6 +286,7 @@ function getActiveFilterCount() {
   if (parseInt(priceMinInput.value, 10) !== 0 || parseInt(priceMaxInput.value, 10) !== PRICE_POINTS.length - 1) n++;
   if (state.retailer  !== 'all') n++;
   if (state.dressType !== 'all') n++;
+  if (state.sizes.size > 0)      n++;
   if (state.query)               n++;
   return n;
 }
@@ -408,6 +432,42 @@ typePills.addEventListener('click', e => {
   applyFilters();
 });
 
+// ─── Size pills (multi-select) ────────────────────────────────────
+sizePills.addEventListener('click', e => {
+  const pill = e.target.closest('.pill');
+  if (!pill) return;
+
+  const sizeVal = pill.dataset.size;
+  const allPill = sizePills.querySelector('[data-size="all"]');
+
+  if (sizeVal === 'all') {
+    state.sizes.clear();
+    sizePills.querySelectorAll('.pill').forEach(p => {
+      p.classList.remove('pill--active');
+      p.removeAttribute('aria-pressed');
+    });
+    allPill.classList.add('pill--active');
+  } else {
+    allPill.classList.remove('pill--active');
+    allPill.removeAttribute('aria-pressed');
+    const n = parseInt(sizeVal, 10);
+    if (state.sizes.has(n)) {
+      state.sizes.delete(n);
+      pill.classList.remove('pill--active');
+      pill.removeAttribute('aria-pressed');
+      if (state.sizes.size === 0) {
+        allPill.classList.add('pill--active');
+      }
+    } else {
+      state.sizes.add(n);
+      pill.classList.add('pill--active');
+      pill.setAttribute('aria-pressed', 'true');
+    }
+  }
+
+  applyFilters();
+});
+
 // ─── Search ───────────────────────────────────────────────────────
 let searchDebounce = null;
 
@@ -461,6 +521,7 @@ function resetFilters() {
   state.maxPrice  = PRICE_POINTS[PRICE_POINTS.length - 1];
   state.retailer  = 'all';
   state.dressType = 'all';
+  state.sizes     = new Set();
   state.sort      = 'default';
   state.unit      = 'ft';
   state.query     = '';
@@ -481,12 +542,12 @@ function resetFilters() {
     b.classList.toggle('unit-btn--active', b.dataset.unit === 'ft');
   });
 
-  [retailerPills, typePills].forEach(group => {
+  [retailerPills, typePills, sizePills].forEach(group => {
     group.querySelectorAll('.pill').forEach(p => {
       p.classList.remove('pill--active');
       p.removeAttribute('aria-pressed');
     });
-    const allPill = group.querySelector('[data-retailer="all"], [data-type="all"]');
+    const allPill = group.querySelector('[data-retailer="all"], [data-type="all"], [data-size="all"]');
     if (allPill) {
       allPill.classList.add('pill--active');
       allPill.setAttribute('aria-pressed', 'true');

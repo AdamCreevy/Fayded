@@ -331,24 +331,22 @@ function applyFilters() {
 }
 
 // ─── Mobile filter panel toggle ──────────────────────────────────
-const filterSidebarContent = document.getElementById('filterSidebarContent');
-
-function handleBodyTouchMove(e) {
-  if (!e.target.closest('#filterSidebarContent')) {
-    e.preventDefault();
-  }
-}
+let savedScrollY = 0;
 
 function openFilterPanel() {
+  savedScrollY = window.scrollY;
+  document.body.style.top = `-${savedScrollY}px`;
+  document.body.classList.add('filter-open');
   filterSidebar.classList.add('is-open');
   filterToggleBar.setAttribute('aria-expanded', 'true');
-  document.addEventListener('touchmove', handleBodyTouchMove, { passive: false });
 }
 
 function closeFilterPanel() {
   filterSidebar.classList.remove('is-open');
   filterToggleBar.setAttribute('aria-expanded', 'false');
-  document.removeEventListener('touchmove', handleBodyTouchMove);
+  document.body.classList.remove('filter-open');
+  document.body.style.top = '';
+  window.scrollTo(0, savedScrollY);
 }
 
 filterToggleBar.addEventListener('click', () => {

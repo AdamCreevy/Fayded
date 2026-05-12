@@ -606,9 +606,10 @@ filterSidebar.addEventListener('touchstart', e => {
 }, { passive: true });
 
 filterSidebar.addEventListener('touchend', e => {
-  const delta = e.changedTouches[0].clientY - touchStartY;
-  const atTop  = filterSidebarContent.scrollTop === 0;
-  if (delta < -40 && filterSidebar.classList.contains('is-open') && atTop) {
+  const delta    = e.changedTouches[0].clientY - touchStartY;
+  const atTop    = filterSidebarContent.scrollTop === 0;
+  const atBottom = filterSidebarContent.scrollTop + filterSidebarContent.clientHeight >= filterSidebarContent.scrollHeight - 1;
+  if (delta < -40 && filterSidebar.classList.contains('is-open') && (atTop || atBottom)) {
     closeFilterPanel();
   }
 }, { passive: true });

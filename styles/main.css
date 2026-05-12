@@ -861,6 +861,7 @@ body.unit-ft .card-height-ft {
     position: sticky;
     top: 0;
     z-index: 100;
+    height: auto;
     max-height: none;
     overflow: visible;
     border-right: none;

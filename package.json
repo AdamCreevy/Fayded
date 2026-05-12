@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Browse UK dresses filtered by model height",
   "scripts": {
-    "dev": "npx serve . -p 3000 --no-clipboard"
+    "dev": "npx serve . -p 3000 --no-clipboard",
+    "scrape": "npm --prefix \"../Fayded Web Scraper\" run scrape"
   }
 }

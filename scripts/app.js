@@ -585,6 +585,21 @@ function resetFilters() {
   applyFilters();
 }
 
+// ─── Mobile swipe-up to close filter panel ───────────────────────
+let touchStartY = 0;
+
+filterSidebar.addEventListener('touchstart', e => {
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+filterSidebar.addEventListener('touchend', e => {
+  const delta = e.changedTouches[0].clientY - touchStartY;
+  if (delta < -40 && filterSidebar.classList.contains('is-open')) {
+    filterSidebar.classList.remove('is-open');
+    filterToggleBar.setAttribute('aria-expanded', 'false');
+  }
+}, { passive: true });
+
 // ─── Init ─────────────────────────────────────────────────────────
 document.body.classList.add('unit-ft');
 heightMinInput.step = '2.54';

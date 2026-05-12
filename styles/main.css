@@ -117,6 +117,7 @@ body {
     text-align: center;
   }
   .logo { align-items: center; }
+  .logo-tag { margin-top: 22px; }
   .header-tagline { text-align: center; }
 }
 

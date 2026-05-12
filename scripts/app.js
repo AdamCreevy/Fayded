@@ -331,15 +331,25 @@ function applyFilters() {
 }
 
 // ─── Mobile filter panel toggle ──────────────────────────────────
+function openFilterPanel() {
+  filterSidebar.classList.add('is-open');
+  filterToggleBar.setAttribute('aria-expanded', 'true');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeFilterPanel() {
+  filterSidebar.classList.remove('is-open');
+  filterToggleBar.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+}
+
 filterToggleBar.addEventListener('click', () => {
-  const isOpen = filterSidebar.classList.toggle('is-open');
-  filterToggleBar.setAttribute('aria-expanded', String(isOpen));
+  filterSidebar.classList.contains('is-open') ? closeFilterPanel() : openFilterPanel();
 });
 
 document.addEventListener('click', e => {
   if (filterSidebar.classList.contains('is-open') && !filterSidebar.contains(e.target)) {
-    filterSidebar.classList.remove('is-open');
-    filterToggleBar.setAttribute('aria-expanded', 'false');
+    closeFilterPanel();
   }
 });
 
@@ -595,8 +605,7 @@ filterSidebar.addEventListener('touchstart', e => {
 filterSidebar.addEventListener('touchend', e => {
   const delta = e.changedTouches[0].clientY - touchStartY;
   if (delta < -40 && filterSidebar.classList.contains('is-open')) {
-    filterSidebar.classList.remove('is-open');
-    filterToggleBar.setAttribute('aria-expanded', 'false');
+    closeFilterPanel();
   }
 }, { passive: true });
 

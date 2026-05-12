@@ -763,9 +763,11 @@ body.unit-ft .card-height-ft {
   transition: background 0.15s ease, color 0.15s ease;
 }
 
-.reset-btn:hover {
-  background: var(--text);
-  color: var(--white);
+@media (hover: hover) {
+  .reset-btn:hover {
+    background: var(--text);
+    color: var(--white);
+  }
 }
 
 /* ─── Pagination ──────────────────────────────────────────────── */

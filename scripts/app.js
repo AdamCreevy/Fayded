@@ -613,7 +613,8 @@ filterSidebar.addEventListener('touchstart', e => {
 
 filterSidebar.addEventListener('touchend', e => {
   const delta = e.changedTouches[0].clientY - touchStartY;
-  if (delta < -40 && filterSidebar.classList.contains('is-open')) {
+  const atTop  = filterSidebarContent.scrollTop === 0;
+  if (delta < -40 && filterSidebar.classList.contains('is-open') && atTop) {
     closeFilterPanel();
   }
 }, { passive: true });

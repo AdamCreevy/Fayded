@@ -978,6 +978,16 @@ body.unit-ft .card-height-ft {
     flex: 1 1 100%;
   }
 
+  #sizePills {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  #sizePills .pill {
+    text-align: center;
+    padding: 5px 4px;
+  }
+
   .sidebar-divider { display: none; }
 
   .sidebar-reset {

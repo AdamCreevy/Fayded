@@ -607,10 +607,13 @@ function resetFilters() {
 }
 
 // ─── Mobile swipe-up to close filter panel ───────────────────────
-let touchStartY = 0;
+let touchStartY        = 0;
+let startedAtBottom    = false;
 
 filterSidebar.addEventListener('touchstart', e => {
-  touchStartY = e.touches[0].clientY;
+  touchStartY     = e.touches[0].clientY;
+  const { scrollTop, scrollHeight, clientHeight } = filterSidebarContent;
+  startedAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
 }, { passive: true });
 
 // Prevent the iOS rubber-band bounce when at the bottom of the panel;
@@ -623,10 +626,9 @@ filterSidebarContent.addEventListener('touchmove', e => {
 }, { passive: false });
 
 filterSidebar.addEventListener('touchend', e => {
-  const delta    = e.changedTouches[0].clientY - touchStartY;
-  const atTop    = filterSidebarContent.scrollTop === 0;
-  const atBottom = filterSidebarContent.scrollTop + filterSidebarContent.clientHeight >= filterSidebarContent.scrollHeight - 1;
-  if (delta < -40 && filterSidebar.classList.contains('is-open') && (atTop || atBottom)) {
+  const delta  = e.changedTouches[0].clientY - touchStartY;
+  const atTop  = filterSidebarContent.scrollTop === 0;
+  if (delta < -40 && filterSidebar.classList.contains('is-open') && (atTop || startedAtBottom)) {
     closeFilterPanel();
   }
 }, { passive: true });

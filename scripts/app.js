@@ -57,6 +57,7 @@ const state = {
   retailer:  'all',
   dressType: 'all',
   sizes:     new Set(),
+  saleOnly:  false,
   sort:      'default',
   unit:      'ft',
   query:     '',
@@ -77,6 +78,7 @@ const priceMinInput     = document.getElementById('priceMin');
 const priceMaxInput     = document.getElementById('priceMax');
 const priceLabel        = document.getElementById('priceLabel');
 const priceFill         = document.getElementById('priceFill');
+const salePills         = document.getElementById('salePills');
 const retailerPills     = document.getElementById('retailerPills');
 const typePills         = document.getElementById('typePills');
 const sizePills         = document.getElementById('sizePills');
@@ -194,7 +196,8 @@ function getFilteredSorted() {
     const inSearch      = !q || d.name.toLowerCase().includes(q) || d.retailer.toLowerCase().includes(q);
     const inSize        = selectedSizes.length === 0 ||
                           selectedSizes.some(s => (dressSizeMap.get(d.id) || new Set()).has(s));
-    return inHeightRange && inPriceRange && inRetailer && inType && inSearch && inSize;
+    const inSale        = !state.saleOnly || d.originalPrice != null;
+    return inHeightRange && inPriceRange && inRetailer && inType && inSearch && inSize && inSale;
   });
 
   switch (state.sort) {
@@ -211,11 +214,18 @@ function getFilteredSorted() {
 function cardHTML(d) {
   const name     = escapeHtml(d.name);
   const retailer = escapeHtml(d.retailer);
-  const price    = formatPrice(d.price);
   const ftIn     = cmToFtIn(d.modelHeight);
   const imgSrc   = escapeHtml(d.imageUrl);
   const url      = escapeHtml(d.productUrl);
   const fallback = `https://picsum.photos/seed/fallback${d.id}/600/800`;
+
+  const onSale = d.originalPrice != null;
+  const priceHtml = onSale
+    ? `<p class="card-price"><span class="card-price-original">${formatPrice(d.originalPrice)}</span><span class="card-price-sale">${formatPrice(d.price)}</span></p>`
+    : `<p class="card-price">${formatPrice(d.price)}</p>`;
+  const priceAriaLabel = onSale
+    ? `${formatPrice(d.price)}, was ${formatPrice(d.originalPrice)}`
+    : formatPrice(d.price);
 
   return `
     <article class="dress-card">
@@ -223,7 +233,7 @@ function cardHTML(d) {
          href="${url}"
          target="_blank"
          rel="noopener noreferrer"
-         aria-label="${name} — ${retailer} — ${price} — model height ${d.modelHeight}cm">
+         aria-label="${name} — ${retailer} — ${priceAriaLabel} — model height ${d.modelHeight}cm">
         <div class="card-image-wrap">
           <img class="card-img"
                src="${imgSrc}"
@@ -239,7 +249,7 @@ function cardHTML(d) {
         </div>
         <div class="card-info">
           <h3 class="card-name">${name}</h3>
-          <p class="card-price">${price}</p>
+          ${priceHtml}
         </div>
       </a>
     </article>
@@ -284,6 +294,7 @@ function getActiveFilterCount() {
   let n = 0;
   if (state.minHeight !== DATA_HEIGHT_MIN || state.maxHeight !== DATA_HEIGHT_MAX) n++;
   if (parseInt(priceMinInput.value, 10) !== 0 || parseInt(priceMaxInput.value, 10) !== PRICE_POINTS.length - 1) n++;
+  if (state.saleOnly)            n++;
   if (state.retailer  !== 'all') n++;
   if (state.dressType !== 'all') n++;
   if (state.sizes.size > 0)      n++;
@@ -398,6 +409,22 @@ unitToggle.addEventListener('click', e => {
   heightMaxInput.step = step;
 
   updateHeightLabels();
+});
+
+// ─── Sale pills ───────────────────────────────────────────────────
+salePills.addEventListener('click', e => {
+  const pill = e.target.closest('.pill');
+  if (!pill) return;
+
+  salePills.querySelectorAll('.pill').forEach(p => {
+    p.classList.remove('pill--active');
+    p.removeAttribute('aria-pressed');
+  });
+  pill.classList.add('pill--active');
+  pill.setAttribute('aria-pressed', 'true');
+
+  state.saleOnly = pill.dataset.sale === 'sale';
+  applyFilters();
 });
 
 // ─── Retailer pills ───────────────────────────────────────────────
@@ -519,6 +546,7 @@ function resetFilters() {
   state.maxHeight = DATA_HEIGHT_MAX;
   state.minPrice  = 0;
   state.maxPrice  = PRICE_POINTS[PRICE_POINTS.length - 1];
+  state.saleOnly  = false;
   state.retailer  = 'all';
   state.dressType = 'all';
   state.sizes     = new Set();
@@ -542,12 +570,12 @@ function resetFilters() {
     b.classList.toggle('unit-btn--active', b.dataset.unit === 'ft');
   });
 
-  [retailerPills, typePills, sizePills].forEach(group => {
+  [salePills, retailerPills, typePills, sizePills].forEach(group => {
     group.querySelectorAll('.pill').forEach(p => {
       p.classList.remove('pill--active');
       p.removeAttribute('aria-pressed');
     });
-    const allPill = group.querySelector('[data-retailer="all"], [data-type="all"], [data-size="all"]');
+    const allPill = group.querySelector('[data-sale="all"], [data-retailer="all"], [data-type="all"], [data-size="all"]');
     if (allPill) {
       allPill.classList.add('pill--active');
       allPill.setAttribute('aria-pressed', 'true');

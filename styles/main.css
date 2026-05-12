@@ -200,7 +200,7 @@ body {
   flex-shrink: 0;
   position: sticky;
   top: 0;
-  max-height: 100vh;
+  height: 100vh;
   overflow-y: auto;
   border-right: 1px solid var(--border);
   padding: 28px 20px 32px;
@@ -714,6 +714,20 @@ body.unit-ft .card-height-ft {
   font-size: 13px;
   font-weight: 500;
   color: var(--text);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.card-price-original {
+  text-decoration: line-through;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.card-price-sale {
+  color: var(--gold);
 }
 
 /* ─── Empty state ─────────────────────────────────────────────── */

@@ -333,17 +333,25 @@ function applyFilters() {
 // ─── Mobile filter panel toggle ──────────────────────────────────
 const filterSidebarContent = document.getElementById('filterSidebarContent');
 
+function blockBackgroundScroll(e) {
+  if (!e.target.closest('#filterSidebarContent')) {
+    e.preventDefault();
+  }
+}
+
 function openFilterPanel() {
   const panelTop = filterToggleBar.getBoundingClientRect().bottom;
   filterSidebarContent.style.top       = `${panelTop}px`;
   filterSidebarContent.style.maxHeight = `${window.innerHeight - panelTop}px`;
   filterSidebar.classList.add('is-open');
   filterToggleBar.setAttribute('aria-expanded', 'true');
+  document.addEventListener('touchmove', blockBackgroundScroll, { passive: false });
 }
 
 function closeFilterPanel() {
   filterSidebar.classList.remove('is-open');
   filterToggleBar.setAttribute('aria-expanded', 'false');
+  document.removeEventListener('touchmove', blockBackgroundScroll);
 }
 
 filterToggleBar.addEventListener('click', () => {

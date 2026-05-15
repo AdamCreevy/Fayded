@@ -485,6 +485,42 @@ body {
   outline-offset: 2px;
 }
 
+/* Colour swatches */
+.colour-swatch-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+
+.colour-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s var(--ease-spring);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.colour-swatch:hover {
+  transform: scale(1.2);
+}
+
+.colour-swatch--active {
+  outline-color: var(--text);
+}
+
+.colour-swatch--light {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.14);
+}
+
+.colour-swatch:focus-visible {
+  outline-color: var(--text);
+}
+
 /* Sort */
 .sort-select {
   -webkit-appearance: none;
@@ -979,7 +1015,8 @@ body.unit-ft .card-height-ft {
 
   .filter-sidebar .filter-section--retailer,
   .filter-sidebar .filter-section--type,
-  .filter-sidebar .filter-section--size {
+  .filter-sidebar .filter-section--size,
+  .filter-sidebar .filter-section--pattern {
     flex: 1 1 100%;
   }
 

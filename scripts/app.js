@@ -24,6 +24,88 @@ function extractUkSizes(colours) {
 
 const dressSizeMap = new Map(dresses.map(d => [d.id, extractUkSizes(d.sizes || [])]));
 
+// ─── Colour keyword → category lookup ────────────────────────────
+const COLOUR_KEYWORDS = new Map([
+  ['black',     ['Black']],
+  ['white',     ['White']],  ['champagne', ['White']],  ['cream',     ['White']],
+  ['blue',      ['Blue']],   ['cyan',      ['Blue']],   ['turquoise', ['Blue']],
+  ['navy',      ['Blue']],   ['sapphire',  ['Blue']],   ['denim',     ['Blue']],  ['indigo',    ['Blue']],
+  ['red',       ['Red']],    ['ruby',      ['Red']],    ['crimson',   ['Red']],   ['scarlet',   ['Red']],
+  ['green',     ['Green']],  ['emerald',   ['Green']],  ['sage',      ['Green']],
+  ['yellow',    ['Yellow']],
+  ['pink',      ['Pink']],
+  ['purple',    ['Purple']], ['lilac',     ['Purple']], ['violet',    ['Purple']],
+  ['lavender',  ['Purple']], ['burgundy',  ['Purple', 'Red']],
+  ['brown',     ['Brown']],  ['chocolate', ['Brown']],  ['sand',      ['Brown']], ['bronze',    ['Brown']],
+  ['grey',      ['Grey']],   ['gray',      ['Grey']],
+  ['silver',    ['Silver']],
+  ['gold',      ['Gold']],
+]);
+
+function extractColourCategories(name) {
+  const words = name.toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/);
+  const seen = new Set();
+  const result = [];
+  for (const word of words) {
+    const colours = COLOUR_KEYWORDS.get(word);
+    if (colours) {
+      for (const colour of colours) {
+        if (!seen.has(colour)) {
+          seen.add(colour);
+          result.push(colour);
+        }
+      }
+    }
+  }
+  return result;
+}
+
+const dressColourMap = new Map(dresses.map(d => [d.id, extractColourCategories(d.name)]));
+
+// ─── Pattern keyword → category lookup ───────────────────────────
+const PATTERN_KEYWORDS = new Map([
+  ['stripe',      ['Striped']],  ['striped',     ['Striped']],
+  ['stripes',     ['Striped']],  ['stripy',      ['Striped']],
+  ['floral',      ['Floral']],   ['flower',      ['Floral']],
+  ['flowers',     ['Floral']],
+  ['polka',       ['Polka Dot']], ['spot',        ['Polka Dot']],
+  ['spotted',     ['Polka Dot']], ['spotty',      ['Polka Dot']],
+  ['lace',        ['Lace']],     ['lacy',        ['Lace']],
+  ['animal',      ['Animal Print']], ['leopard',  ['Animal Print']],
+  ['zebra',       ['Animal Print']], ['snake',    ['Animal Print']],
+  ['snakeskin',   ['Animal Print']], ['tiger',    ['Animal Print']],
+  ['cheetah',     ['Animal Print']], ['crocodile',['Animal Print']],
+  ['python',      ['Animal Print']],
+  ['paisley',     ['Paisley']],
+  ['geometric',   ['Geometric']], ['geo',         ['Geometric']],
+  ['check',       ['Checked']],  ['checked',     ['Checked']],
+  ['checkered',   ['Checked']],  ['tartan',      ['Checked']],
+  ['gingham',     ['Checked']],  ['houndstooth', ['Checked']],
+  ['plaid',       ['Checked']],
+  ['sequin',      ['Sequin']],  ['sequins',     ['Sequin']],
+  ['sequined',    ['Sequin']],  ['sequinned',   ['Sequin']],
+]);
+
+function extractPatternCategories(name) {
+  const words = name.toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/);
+  const seen = new Set();
+  const result = [];
+  for (const word of words) {
+    const patterns = PATTERN_KEYWORDS.get(word);
+    if (patterns) {
+      for (const pattern of patterns) {
+        if (!seen.has(pattern)) {
+          seen.add(pattern);
+          result.push(pattern);
+        }
+      }
+    }
+  }
+  return result;
+}
+
+const dressPatternMap = new Map(dresses.map(d => [d.id, extractPatternCategories(d.name)]));
+
 
 const PAGE_SIZE = 100;
 
@@ -57,6 +139,8 @@ const state = {
   retailer:  'all',
   dressType: 'all',
   sizes:     new Set(),
+  colour:    'all',
+  pattern:   'all',
   saleOnly:  false,
   sort:      'default',
   unit:      'ft',
@@ -82,6 +166,8 @@ const salePills         = document.getElementById('salePills');
 const retailerPills     = document.getElementById('retailerPills');
 const typePills         = document.getElementById('typePills');
 const sizePills         = document.getElementById('sizePills');
+const colourSwatches    = document.getElementById('colourSwatches');
+const patternPills      = document.getElementById('patternPills');
 const sortSelect        = document.getElementById('sortSelect');
 const resultCount       = document.getElementById('resultCount');
 const dressGrid         = document.getElementById('dressGrid');
@@ -197,7 +283,9 @@ function getFilteredSorted() {
     const inSize        = selectedSizes.length === 0 ||
                           selectedSizes.some(s => (dressSizeMap.get(d.id) || new Set()).has(s));
     const inSale        = !state.saleOnly || d.originalPrice != null;
-    return inHeightRange && inPriceRange && inRetailer && inType && inSearch && inSize && inSale;
+    const inColour      = state.colour === 'all' || (dressColourMap.get(d.id) || []).includes(state.colour);
+    const inPattern     = state.pattern === 'all' || (dressPatternMap.get(d.id) || []).includes(state.pattern);
+    return inHeightRange && inPriceRange && inRetailer && inType && inSearch && inSize && inSale && inColour && inPattern;
   });
 
   switch (state.sort) {
@@ -298,6 +386,8 @@ function getActiveFilterCount() {
   if (state.retailer  !== 'all') n++;
   if (state.dressType !== 'all') n++;
   if (state.sizes.size > 0)      n++;
+  if (state.colour    !== 'all') n++;
+  if (state.pattern   !== 'all') n++;
   if (state.query)               n++;
   return n;
 }
@@ -528,6 +618,43 @@ sizePills.addEventListener('click', e => {
   applyFilters();
 });
 
+// ─── Colour swatch ────────────────────────────────────────────────
+colourSwatches.addEventListener('click', e => {
+  const btn = e.target.closest('[data-colour]');
+  if (!btn) return;
+
+  colourSwatches.querySelectorAll('[data-colour]').forEach(b => {
+    b.classList.remove('pill--active', 'colour-swatch--active');
+    b.removeAttribute('aria-pressed');
+  });
+
+  if (btn.dataset.colour === 'all') {
+    btn.classList.add('pill--active');
+  } else {
+    btn.classList.add('colour-swatch--active');
+  }
+  btn.setAttribute('aria-pressed', 'true');
+
+  state.colour = btn.dataset.colour;
+  applyFilters();
+});
+
+// ─── Pattern pills ────────────────────────────────────────────────
+patternPills.addEventListener('click', e => {
+  const pill = e.target.closest('.pill');
+  if (!pill) return;
+
+  patternPills.querySelectorAll('.pill').forEach(p => {
+    p.classList.remove('pill--active');
+    p.removeAttribute('aria-pressed');
+  });
+  pill.classList.add('pill--active');
+  pill.setAttribute('aria-pressed', 'true');
+
+  state.pattern = pill.dataset.pattern;
+  applyFilters();
+});
+
 // ─── Search ───────────────────────────────────────────────────────
 let searchDebounce = null;
 
@@ -583,6 +710,8 @@ function resetFilters() {
   state.retailer  = 'all';
   state.dressType = 'all';
   state.sizes     = new Set();
+  state.colour    = 'all';
+  state.pattern   = 'all';
   state.sort      = 'default';
   state.unit      = 'ft';
   state.query     = '';
@@ -603,17 +732,24 @@ function resetFilters() {
     b.classList.toggle('unit-btn--active', b.dataset.unit === 'ft');
   });
 
-  [salePills, retailerPills, typePills, sizePills].forEach(group => {
+  [salePills, retailerPills, typePills, sizePills, patternPills].forEach(group => {
     group.querySelectorAll('.pill').forEach(p => {
       p.classList.remove('pill--active');
       p.removeAttribute('aria-pressed');
     });
-    const allPill = group.querySelector('[data-sale="all"], [data-retailer="all"], [data-type="all"], [data-size="all"]');
+    const allPill = group.querySelector('[data-sale="all"], [data-retailer="all"], [data-type="all"], [data-size="all"], [data-pattern="all"]');
     if (allPill) {
       allPill.classList.add('pill--active');
       allPill.setAttribute('aria-pressed', 'true');
     }
   });
+
+  colourSwatches.querySelectorAll('[data-colour]').forEach(b => {
+    b.classList.remove('pill--active', 'colour-swatch--active');
+    b.removeAttribute('aria-pressed');
+  });
+  const allColourPill = colourSwatches.querySelector('[data-colour="all"]');
+  if (allColourPill) allColourPill.classList.add('pill--active');
 
   applyFilters();
 }
